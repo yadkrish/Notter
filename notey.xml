@@ -27,9 +27,9 @@
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="invisible_char">&#x25CF;</property>
-                <signal name="key_press_event" handler="on_entry1_key_press_event"/>
                 <signal name="focus_in_event" handler="on_entry1_focus_in_event"/>
                 <signal name="activate" handler="on_entry1_activate"/>
+                <signal name="key_release_event" handler="on_entry1_key_release_event"/>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -47,7 +47,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="model">liststore1</property>
-                    <property name="hover_selection">True</property>
+                    <property name="rubber_banding">True</property>
                     <signal name="key_press_event" handler="on_treeview1_key_press_event"/>
                     <signal name="row_activated" handler="on_treeview1_row_activated"/>
                   </object>

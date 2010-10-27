@@ -24,8 +24,7 @@ class GNotey(object):
       # and http://zetcode.com/tutorials/pygtktutorial/advancedwidgets/
       #
       cell0 = gtk.CellRendererText()
-      self.col0 = gtk.TreeViewColumn("Title", cell0,
-                            text=0)
+      self.col0 = gtk.TreeViewColumn("Title", cell0,text=0)
       self.treeview1 = builder.get_object("treeview1")
       self.treeview1.append_column(self.col0)
       self.liststore1 = builder.get_object("liststore1")
@@ -84,7 +83,7 @@ get the title from our sqlite3 database self.notedb
       else:
         conn = sqlite3.connect(self.notedb)
         c = conn.cursor()
-        c.execute("select title from notes where title like '?%'",(title,))
+        c.execute("select title from notes where title like ?",(title + "%",))
         #c.execute("select title from notes order by title")
         r = [ row[0] for row in c ]
         c.close()
@@ -163,9 +162,11 @@ When a title is selected update the textbuffer with its contents
 
   def on_treeview1_key_press_event(self,widget,event):
 
-      model, rows = widget.get_selection().get_selected_rows()
-      #row_count = len(rows)
-      #pass
+      treeselection = widget.get_selection()
+      model, rows = treeselection.get_selected_rows()
+      row_count = len(rows)
+      print "row_count = %s" % (row_count)
+
       title = model[rows[0][0]][0]
 
       self.title = title
@@ -205,7 +206,7 @@ When text entry is activate [ i.e enter pressed ] either
       else:
         pass
 
-  def on_entry1_key_press_event(self,widget,event):
+  def on_entry1_key_release_event(self,widget,event):
     """
 Implementing incremental search
 """
