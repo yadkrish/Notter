@@ -48,8 +48,8 @@
                     <property name="can_focus">True</property>
                     <property name="model">liststore1</property>
                     <property name="rubber_banding">True</property>
-                    <signal name="key_press_event" handler="on_treeview1_key_press_event"/>
                     <signal name="row_activated" handler="on_treeview1_row_activated"/>
+                    <signal name="key_release_event" handler="on_treeview1_key_release_event"/>
                   </object>
                 </child>
               </object>

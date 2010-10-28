@@ -27,6 +27,7 @@ class GNotey(object):
       self.col0 = gtk.TreeViewColumn("Title", cell0,text=0)
       self.treeview1 = builder.get_object("treeview1")
       self.treeview1.append_column(self.col0)
+      self.treeview1.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
       self.liststore1 = builder.get_object("liststore1")
       
       self.populate_liststore1()
@@ -160,26 +161,33 @@ When a title is selected update the textbuffer with its contents
       else:
         pass
 
-  def on_treeview1_key_press_event(self,widget,event):
+  def on_treeview1_key_release_event(self,widget,event):
 
       treeselection = widget.get_selection()
+      #mode = treeselection.get_mode()
+      #print "mode =  %s" % (mode)
       model, rows = treeselection.get_selected_rows()
-      row_count = len(rows)
-      print "row_count = %s" % (row_count)
+      row_count = treeselection.count_selected_rows()
+      print "rows = %s" % (rows)
+      print "row_count = %s" % (row_count)      
 
-      title = model[rows[0][0]][0]
 
-      self.title = title
+      for j in rows:
+            print "j = %s" % (j)
+            titles[].append = model[j][0]  # Store the titles in an array----Not Working
+            print "titles = %s" % (titles[])
 
-      keyname = gtk.gdk.keyval_name(event.keyval)
-      #print "Key %s (%d) was pressed" % (keyname, event.keyval)
-      if title:
-        if event.keyval == 65535:
-          self.delete_note(title)
-          self.populate_liststore1()        
-      else:
-        pass
-           
+      for i in range(row_count):
+            title = titles[i]
+            self.title = title
+            keyname = gtk.gdk.keyval_name(event.keyval)
+            #print "Key %s (%d) was pressed" % (keyname, event.keyval)
+            if event.keyval == 65535:
+               print "title in = %s" % (title)               
+               self.delete_note(title)
+               self.populate_liststore1()
+     
+                     
   def on_entry1_activate(self, widget, data=None):
       """
 When text entry is activate [ i.e enter pressed ] either
