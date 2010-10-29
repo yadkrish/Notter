@@ -36,6 +36,9 @@ class GNotey(object):
       self.textbuffer1 = builder.get_object("textbuffer1")
       self.textview1 = builder.get_object("textview1")
 
+      self.window2 = builder.get_object("window2")
+      self.entry2 = builder.get_object("entry2")
+
       self.entry1 = builder.get_object("entry1")
       self.vbox1 = builder.get_object("vbox1")
       self.tvsw = builder.get_object("scrolledwindow1")
@@ -120,15 +123,24 @@ Give a title get the content of a note from self.notedb
       else:
         pass
 
-  def delete_note(self, title):
-      if title:
+  def delete_note(self):
+      if self.title:
         conn = sqlite3.connect(self.notedb)
         c = conn.cursor()
-        c.execute("delete from notes where title = ?", (title,))
+        c.execute("delete from notes where title = ?", (self.title,))
         conn.commit()
         c.close()
       else:
         pass
+
+  def edit_title(self,title):
+      if self.title:
+        conn = sqlite3.connect(self.notedb)
+        c = conn.cursor()
+        c.execute("update notes set title = ? where title = ?", (title, self.title))
+        conn.commit()
+        c.close()
+    
        
   def on_window1_destroy(self,widget,data=None):
       self.save_note()
@@ -164,30 +176,36 @@ When a title is selected update the textbuffer with its contents
   def on_treeview1_key_release_event(self,widget,event):
 
       treeselection = widget.get_selection()
-      #mode = treeselection.get_mode()
-      #print "mode =  %s" % (mode)
       model, rows = treeselection.get_selected_rows()
-      row_count = treeselection.count_selected_rows()
-      print "rows = %s" % (rows)
-      print "row_count = %s" % (row_count)      
-
-
+      
+      
+      titles = []
       for j in rows:
-            print "j = %s" % (j)
-            titles[].append = model[j][0]  # Store the titles in an array----Not Working
-            print "titles = %s" % (titles[])
+        titles.append(model[j][0])
+                       
+      if len(titles) == 1:
+        title = titles[0]
+        keyname = gtk.gdk.keyval_name(event.keyval)
+        if event.keyval == 65471:
+          print "self.title = %s" % (title)
+          self.entry2.set_text(title)
+          self.window2.show()
+          self.window2.map()  
 
-      for i in range(row_count):
-            title = titles[i]
-            self.title = title
-            keyname = gtk.gdk.keyval_name(event.keyval)
-            #print "Key %s (%d) was pressed" % (keyname, event.keyval)
-            if event.keyval == 65535:
-               print "title in = %s" % (title)               
-               self.delete_note(title)
-               self.populate_liststore1()
-     
-                     
+          
+                  
+                 
+      for title in titles:
+        self.title = title
+        keyname = gtk.gdk.keyval_name(event.keyval)                        
+        #print "Key %s (%d) was pressed" % (keyname, event.keyval)
+        if event.keyval == 65535:
+          self.delete_note()
+          self.populate_liststore1()
+          self.entry1.set_text("")
+                
+
+  
   def on_entry1_activate(self, widget, data=None):
       """
 When text entry is activate [ i.e enter pressed ] either
@@ -228,6 +246,18 @@ Implementing incremental search
     if title == "":
       self.populate_liststore1()
     pass
+
+  def on_entry2_key_release_event(self,widget,event):
+  
+    keyname = gtk.gdk.keyval_name(event.keyval)
+    print "Key %s (%d) was pressed" % (keyname, event.keyval)
+    if event.keyval == 65293:
+      title = widget.get_text()
+      self.window2.hide()
+      self.edit_title(title)
+      self.populate_liststore1()
+      self.entry1.set_text(title)
+    
     
   def save_note(self):
       if self.title:
