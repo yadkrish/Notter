@@ -177,35 +177,30 @@ When a title is selected update the textbuffer with its contents
 
       treeselection = widget.get_selection()
       model, rows = treeselection.get_selected_rows()
-      
-      
+
+      """
+      Store selected titles to list
+      """
       titles = []
       for j in rows:
         titles.append(model[j][0])
-                       
+      
+      """
+      Edit of Titles
+      """		       
       if len(titles) == 1:
         title = titles[0]
         keyname = gtk.gdk.keyval_name(event.keyval)
         if event.keyval == 65471:
-          print "self.title = %s" % (title)
           self.entry2.set_text(title)
           self.window2.show()
-<<<<<<< HEAD
-          self.window2.map()
-=======
-          self.window2.map()  
->>>>>>> origin/master
-
-          
-                  
-                 
+                          
+      """
+      Deletion of Titles
+      """
       for title in titles:
         self.title = title
-<<<<<<< HEAD
-        keyname = gtk.gdk.keyval_name(event.keyval)
-=======
         keyname = gtk.gdk.keyval_name(event.keyval)                        
->>>>>>> origin/master
         #print "Key %s (%d) was pressed" % (keyname, event.keyval)
         if event.keyval == 65535:
           self.delete_note()
@@ -246,10 +241,10 @@ Implementing incremental search
 """
     
     keyname = gtk.gdk.keyval_name(event.keyval)
-    print "Key %s (%d) was pressed" % (keyname, event.keyval)
+    #print "Key %s (%d) was pressed" % (keyname, event.keyval)
     self.liststore1.clear()
     title = widget.get_text()
-    print "title = %s" % (title)
+    #print "title = %s" % (title)
     self.search_title_populate_liststore1(title)
     if title == "":
       self.populate_liststore1()
@@ -258,7 +253,7 @@ Implementing incremental search
   def on_entry2_key_release_event(self,widget,event):
   
     keyname = gtk.gdk.keyval_name(event.keyval)
-    print "Key %s (%d) was pressed" % (keyname, event.keyval)
+    #print "Key %s (%d) was pressed" % (keyname, event.keyval)
     if event.keyval == 65293:
       title = widget.get_text()
       self.window2.hide()
