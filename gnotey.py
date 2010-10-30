@@ -95,8 +95,8 @@ get the title from our sqlite3 database self.notedb
   
   def get_note_content(self, title=""):
       """
-Give a title get the content of a note from self.notedb
-"""
+      Give a title get the content of a note from self.notedb
+      """
       if not title:
         return ""
       else:
@@ -148,8 +148,8 @@ Give a title get the content of a note from self.notedb
   
   def on_treeview1_row_activated(self, widget, row, col):
       """
-When a title is selected update the textbuffer with its contents
-"""
+      When a title is selected update the textbuffer with its contents
+      """
       model = widget.get_model()
       title = model[row][0]
       try:
@@ -177,14 +177,9 @@ When a title is selected update the textbuffer with its contents
 
       treeselection = widget.get_selection()
       model, rows = treeselection.get_selected_rows()
-<<<<<<< HEAD
-
       """
       Store selected titles to list
       """
-=======
-      
->>>>>>> origin/master
       titles = []
       for j in rows:
         titles.append(model[j][0])
@@ -198,12 +193,7 @@ When a title is selected update the textbuffer with its contents
         if event.keyval == 65471:
           self.entry2.set_text(title)
           self.window2.show()
-<<<<<<< HEAD
-                          
-=======
-          self.window2.map()  
-                  
->>>>>>> origin/master
+
       """
       Deletion of Titles
       """
@@ -220,10 +210,10 @@ When a title is selected update the textbuffer with its contents
   
   def on_entry1_activate(self, widget, data=None):
       """
-When text entry is activate [ i.e enter pressed ] either
-* Open existing note, or
-* Create a new note
-"""
+      When text entry is activate [ i.e enter pressed ] either
+      * Open existing note, or
+      * Create a new note
+      """
       title = widget.get_text()
       if title:
         try:
@@ -238,7 +228,7 @@ When text entry is activate [ i.e enter pressed ] either
     
   def on_entry1_focus_in_event(self, widget, direction, data=None):
       """
-"""
+      """
       if self.tvsw.get_parent() == None :
         self.vbox1.pack_start(self.tvsw)
       else:
@@ -246,8 +236,8 @@ When text entry is activate [ i.e enter pressed ] either
 
   def on_entry1_key_release_event(self,widget,event):
     """
-Implementing incremental search
-"""
+    Implementing incremental search
+    """
     
     keyname = gtk.gdk.keyval_name(event.keyval)
     #print "Key %s (%d) was pressed" % (keyname, event.keyval)
