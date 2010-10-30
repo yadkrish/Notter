@@ -177,10 +177,14 @@ When a title is selected update the textbuffer with its contents
 
       treeselection = widget.get_selection()
       model, rows = treeselection.get_selected_rows()
+<<<<<<< HEAD
 
       """
       Store selected titles to list
       """
+=======
+      
+>>>>>>> origin/master
       titles = []
       for j in rows:
         titles.append(model[j][0])
@@ -194,7 +198,12 @@ When a title is selected update the textbuffer with its contents
         if event.keyval == 65471:
           self.entry2.set_text(title)
           self.window2.show()
+<<<<<<< HEAD
                           
+=======
+          self.window2.map()  
+                  
+>>>>>>> origin/master
       """
       Deletion of Titles
       """
