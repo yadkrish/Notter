@@ -178,11 +178,13 @@ When a title is selected update the textbuffer with its contents
       treeselection = widget.get_selection()
       model, rows = treeselection.get_selected_rows()
       
-      
       titles = []
       for j in rows:
         titles.append(model[j][0])
-                       
+      
+      """
+      Edit of Titles
+      """		       
       if len(titles) == 1:
         title = titles[0]
         keyname = gtk.gdk.keyval_name(event.keyval)
@@ -190,22 +192,14 @@ When a title is selected update the textbuffer with its contents
           print "self.title = %s" % (title)
           self.entry2.set_text(title)
           self.window2.show()
-<<<<<<< HEAD
-          self.window2.map()
-=======
           self.window2.map()  
->>>>>>> origin/master
-
-          
                   
-                 
+      """
+      Deletion of Titles
+      """
       for title in titles:
         self.title = title
-<<<<<<< HEAD
-        keyname = gtk.gdk.keyval_name(event.keyval)
-=======
         keyname = gtk.gdk.keyval_name(event.keyval)                        
->>>>>>> origin/master
         #print "Key %s (%d) was pressed" % (keyname, event.keyval)
         if event.keyval == 65535:
           self.delete_note()
