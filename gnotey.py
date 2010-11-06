@@ -1,4 +1,4 @@
-#!/usr/bin/env pytho
+﻿#!/usr/bin/env pytho
 
 import pygtk
 import gtk
@@ -27,7 +27,7 @@ class GNotey(object):
       cell0 = gtk.CellRendererText()
       self.col0 = gtk.TreeViewColumn("Title", cell0,text=0)
       cell1 = gtk.CellRendererText()
-      self.col1 = gtk.TreeViewColumn("Modified Date", cell1,text=1)
+      self.col1 = gtk.TreeViewColumn("Modified Time", cell1,text=1)
       self.treeview1 = builder.get_object("treeview1")
       self.treeview1.append_column(self.col0)
       self.treeview1.append_column(self.col1)      
@@ -50,7 +50,8 @@ class GNotey(object):
       self.title = ""
       
       self.window1.show()
-
+      
+     
       
   def setup_db(self):
       if ( not os.path.isfile(self.notedb) ):
@@ -95,9 +96,24 @@ populate the liststore with titles from the database
 """
       self.liststore1.clear()
       for row in self.get_note_titles():
-        print "titles = %s" % row[0]
-        print "date = %s" % row[1]
-        self.liststore1.append((row[0],))
+        if row:
+            curr_date=self.get_curr_date()
+            curr_date=datetime.datetime.strptime(curr_date,"%Y-%m-%d %H:%M:%S")
+            mod_date=datetime.datetime.strptime(row[1],"%Y-%m-%d %H:%M:%S")
+            diff=curr_date-mod_date
+            diff_hr=((diff.seconds)/3600)
+            diff_hr_rem=((diff.seconds)%3600)
+            if diff_hr== 0:
+                diff_min=diff_hr_rem/(60)
+                diff_min_rem=diff_hr_rem%(60)
+                if diff_min == 0:
+                    ago="%d secs ago" % diff_min_rem
+                else:    
+                    ago="%d minutes ago" % diff_min
+            else:
+                ago="%d hours ago" % diff_hr
+        
+        self.liststore1.append((row[0],ago,))
 
   def search_title_populate_liststore1(self,title):
       """
@@ -105,9 +121,24 @@ populate the liststore with titles from the database
 """
       self.liststore1.clear()
       for row in self.get_note_titles(title):
-        print "titles = %s" % row[0]
-        print "date = %s" % row[1]
-        self.liststore1.append((row[0],))
+        if row:
+            curr_date=self.get_curr_date()
+            curr_date=datetime.datetime.strptime(curr_date,"%Y-%m-%d %H:%M:%S")
+            mod_date=datetime.datetime.strptime(row[1],"%Y-%m-%d %H:%M:%S")
+            diff=curr_date-mod_date
+            diff_hr=((diff.seconds)/3600)
+            diff_hr_rem=((diff.seconds)%3600)
+            if diff_hr== 0:
+                diff_min=diff_hr_rem/(60)
+                diff_min_rem=diff_hr_rem%(60)
+                if diff_min == 0:
+                    ago="%d secs ago" % diff_min_rem
+                else:    
+                    ago="%d minutes ago" % diff_min
+            else:
+                ago="%d hours ago" % diff_hr
+                    
+        self.liststore1.append((row[0],ago,))
     
   
   def get_note_titles(self,title=""):
@@ -123,7 +154,7 @@ get the title from our sqlite3 database self.notedb
       else:
         conn = sqlite3.connect(self.notedb)
         c = conn.cursor()
-        c.execute("select title,mod_date from notes where title like ?",(title + "%",))
+        c.execute("select title,mod_date from notes where title like ?",("%" + title + "%",))
         row = c.fetchall()
         c.close()
       return row
@@ -131,7 +162,7 @@ get the title from our sqlite3 database self.notedb
 
   def get_curr_date(self):
         now = datetime.datetime.now()
-        curr_date = now.strftime("%Y-%m-%d %H:%M")
+        curr_date = now.strftime("%Y-%m-%d %H:%M:%S")
         return curr_date
       
   def get_note_content(self, title=""):
@@ -323,4 +354,3 @@ get the title from our sqlite3 database self.notedb
 if __name__ == "__main__":
   app = GNotey()
   gtk.main()
-
