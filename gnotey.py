@@ -1,4 +1,4 @@
-﻿#!/usr/bin/env pytho
+#!/usr/bin/env pytho
 
 import pygtk
 import gtk
@@ -24,14 +24,21 @@ class GNotey(object):
       # see http://faq.pygtk.org/index.py?req=show&file=faq13.039.htp
       # and http://zetcode.com/tutorials/pygtktutorial/advancedwidgets/
       #
+      
+      self.treeview1 = builder.get_object("treeview1")
+      
       cell0 = gtk.CellRendererText()
       self.col0 = gtk.TreeViewColumn("Title", cell0,text=0)
+      self.col0.set_sort_column_id(0)
+      self.treeview1.append_column(self.col0)
+      
       cell1 = gtk.CellRendererText()
       self.col1 = gtk.TreeViewColumn("Modified Time", cell1,text=1)
-      self.treeview1 = builder.get_object("treeview1")
-      self.treeview1.append_column(self.col0)
+      self.col1.set_sort_column_id(1)
       self.treeview1.append_column(self.col1)      
+      
       self.treeview1.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
+      
       self.liststore1 = builder.get_object("liststore1")
       
       self.populate_liststore1()
@@ -49,9 +56,17 @@ class GNotey(object):
 
       self.title = ""
       
+      self.liststore1.set_sort_func(0, self.compare_data, 0) 
+      self.liststore1.set_sort_func(1, self.compare_data, 1) 
+      
       self.window1.show()
       
-     
+  def compare_data(self,  model, iter1, iter2, column): 
+        data1 = model.get_value(iter1, column)
+        data2 = model.get_value(iter2, column)
+        print data1, data2, cmp(data1, data2) 
+        return cmp(data1, data2) 
+
       
   def setup_db(self):
       if ( not os.path.isfile(self.notedb) ):
@@ -97,22 +112,8 @@ populate the liststore with titles from the database
       self.liststore1.clear()
       for row in self.get_note_titles():
         if row:
-            curr_date=self.get_curr_date()
-            curr_date=datetime.datetime.strptime(curr_date,"%Y-%m-%d %H:%M:%S")
             mod_date=datetime.datetime.strptime(row[1],"%Y-%m-%d %H:%M:%S")
-            diff=curr_date-mod_date
-            diff_hr=((diff.seconds)/3600)
-            diff_hr_rem=((diff.seconds)%3600)
-            if diff_hr== 0:
-                diff_min=diff_hr_rem/(60)
-                diff_min_rem=diff_hr_rem%(60)
-                if diff_min == 0:
-                    ago="%d secs ago" % diff_min_rem
-                else:    
-                    ago="%d minutes ago" % diff_min
-            else:
-                ago="%d hours ago" % diff_hr
-        
+            ago = self.mod_date_ago(mod_date)                  
         self.liststore1.append((row[0],ago,))
 
   def search_title_populate_liststore1(self,title):
@@ -122,22 +123,8 @@ populate the liststore with titles from the database
       self.liststore1.clear()
       for row in self.get_note_titles(title):
         if row:
-            curr_date=self.get_curr_date()
-            curr_date=datetime.datetime.strptime(curr_date,"%Y-%m-%d %H:%M:%S")
             mod_date=datetime.datetime.strptime(row[1],"%Y-%m-%d %H:%M:%S")
-            diff=curr_date-mod_date
-            diff_hr=((diff.seconds)/3600)
-            diff_hr_rem=((diff.seconds)%3600)
-            if diff_hr== 0:
-                diff_min=diff_hr_rem/(60)
-                diff_min_rem=diff_hr_rem%(60)
-                if diff_min == 0:
-                    ago="%d secs ago" % diff_min_rem
-                else:    
-                    ago="%d minutes ago" % diff_min
-            else:
-                ago="%d hours ago" % diff_hr
-                    
+            ago = self.mod_date_ago(mod_date)    
         self.liststore1.append((row[0],ago,))
     
   
@@ -159,6 +146,22 @@ get the title from our sqlite3 database self.notedb
         c.close()
       return row
 
+  def mod_date_ago(self,mod_date):
+        curr_date=self.get_curr_date()
+        curr_date=datetime.datetime.strptime(curr_date,"%Y-%m-%d %H:%M:%S")
+        diff=curr_date-mod_date
+        diff_hr=((diff.seconds)/3600)
+        diff_hr_rem=((diff.seconds)%3600)
+        if diff_hr== 0:
+            diff_min=diff_hr_rem/(60)
+            diff_min_rem=diff_hr_rem%(60)
+            if diff_min == 0:
+                ago="%d sec(s) ago" % diff_min_rem
+            else:    
+                ago="%d minute(s) ago" % diff_min
+        else:
+            ago="%d hour(s) ago" % diff_hr
+        return ago
 
   def get_curr_date(self):
         now = datetime.datetime.now()
@@ -276,6 +279,8 @@ get the title from our sqlite3 database self.notedb
             self.populate_liststore1()
             self.treeview1_select_title(newtitle)
             content = self.get_note_content(newtitle)
+            print "Line count = %d" % self.textbuffer1.get_line_count()
+            print "Char count = %d" % self.textbuffer1.get_char_count()
             self.textbuffer1.set_text(content)
             self.textview1.grab_focus()
 
@@ -323,11 +328,11 @@ get the title from our sqlite3 database self.notedb
     """
     Implementing incremental search
     """
+    self.reload_liststore1()
     
-    keyname = gtk.gdk.keyval_name(event.keyval)
-    #print "Key %s (%d) was pressed" % (keyname, event.keyval)
+  def reload_liststore1(self):
     self.liststore1.clear()
-    title = widget.get_text()
+    title = self.entry1.get_text()
     self.search_title_populate_liststore1(title)
     if title == "":
       self.populate_liststore1()
@@ -347,6 +352,7 @@ get the title from our sqlite3 database self.notedb
         c.close()
       else:
         pass
+      self.reload_liststore1()
       
   def on_textview1_focus_out_event(self, widget, data=None):
       self.save_note()
