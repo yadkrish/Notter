@@ -6,11 +6,7 @@
     <columns>
       <!-- column-name title -->
       <column type="gchararray"/>
-<<<<<<< HEAD
       <!-- column-name ago -->
-=======
-      <!-- column-name mod_date -->
->>>>>>> 691c8a40c77c981596165230cc01150d7727f049
       <column type="gchararray"/>
     </columns>
   </object>
