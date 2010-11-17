@@ -37,9 +37,8 @@ class GNotey(object):
       cell1 = gtk.CellRendererText()
       self.col1 = gtk.TreeViewColumn("Modified Time", cell1,text=1)
       self.col1.set_sort_column_id(1)
-
       self.treeview1.append_column(self.col1)
-     
+      
       self.treeview1.get_selection().set_mode(gtk.SELECTION_MULTIPLE)
       
       self.liststore1 = builder.get_object("liststore1")
@@ -59,7 +58,6 @@ class GNotey(object):
 
       self.title = ""
       
-
       self.liststore1.set_sort_func(0, self.compare_data, 0)
       self.liststore1.set_sort_func(1, self.compare_data, 1)
 
